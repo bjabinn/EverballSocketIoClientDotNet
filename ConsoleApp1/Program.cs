@@ -1,6 +1,8 @@
 ﻿using System;
 using Quobject.SocketIoClientDotNet.Client;
 using Newtonsoft.Json;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace EverballDotNet
 {
@@ -8,13 +10,36 @@ namespace EverballDotNet
     {
         static void Main(string[] args)
         {
-            object dataFromServer;
+
+            var ManualResetEvent = new ManualResetEvent(false);
+            var events = new Queue<object>();
+
 
             var socket = IO.Socket("http://localhost:3000");
+            object dataFromServer;
+
+            //Menu();
+
             socket.On(Socket.EVENT_CONNECT, () =>
             {
                 Console.WriteLine("EVENT_CONNECT");
+                
                 //socket.Disconnect();
+            });
+
+            socket.On(Socket.EVENT_CONNECT_ERROR, () =>
+            {
+                Console.WriteLine("Error connecting");
+            });
+
+            socket.On(Socket.EVENT_CONNECT_TIMEOUT, () =>
+            {
+                Console.WriteLine("Timeout error");
+            });
+
+            socket.On(Socket.EVENT_RECONNECTING, () =>
+            {
+                Console.WriteLine("Reconnecting");
             });
 
             socket.On("connect", () =>
@@ -26,8 +51,9 @@ namespace EverballDotNet
                     userPassword = "1234568"
                 };
 
-                Console.WriteLine("connect - Trying to connect using (" + login.userName + ")...");
-                socket.Emit("login", JsonConvert.SerializeObject(login));
+                var datoToSend = JsonConvert.SerializeObject(login);
+                socket.Emit("login", datoToSend);
+                ManualResetEvent.Set();
             });
 
             socket.On("server_message", (data) =>
@@ -38,7 +64,10 @@ namespace EverballDotNet
                     RoomName = "One__",
                     RoomPassword = "123"
                 };
-                socket.Emit("join_room", roomData);
+                var datoToSend = JsonConvert.SerializeObject(roomData);
+                socket.Emit("join_room", datoToSend);
+                events.Enqueue(data);
+                ManualResetEvent.Set();
             });
 
 
@@ -58,8 +87,31 @@ namespace EverballDotNet
                     Toy = 1
                 };
                 socket.Emit("client_input", JsonConvert.SerializeObject(mov));
-
+                events.Enqueue(data);
+                ManualResetEvent.Set();
             });
+
+            ManualResetEvent.WaitOne();
+            Console.ReadLine();
+        }
+
+        static void Menu()
+        {
+            Console.WriteLine("1.- Connect to server game");
+            Console.WriteLine("5.- Jugar");
+            Console.WriteLine("10.- Desconectar");
+            var tecla = Console.ReadKey();
+
+
+            switch (tecla.Key)
+            {
+                case ConsoleKey.D1:
+                    break;
+                case ConsoleKey.D5:
+                    break;
+                case ConsoleKey.D0:
+                    break;
+            }
         }
     }
 }
