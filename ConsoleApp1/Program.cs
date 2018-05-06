@@ -7,7 +7,7 @@ namespace EverballDotNet
 {
     class Program
     {
-        static int timeToWait = 150;
+        const int timeToWait = 150;
         static void Main(string[] args)
         {
             var socket = IO.Socket("http://localhost:3000");
@@ -38,7 +38,6 @@ namespace EverballDotNet
                 };
 
                 var datoToSend = JsonConvert.SerializeObject(login);
-                Thread.Sleep(timeToWait);
                 socket.Emit("login", datoToSend);
                 
             });
@@ -52,9 +51,7 @@ namespace EverballDotNet
                     RoomPassword = "123"
                 };
                 var datoToSend = JsonConvert.SerializeObject(roomData);
-                Thread.Sleep(timeToWait);
                 socket.Emit("join_room", datoToSend);
-                //Thread.Sleep(timeToWait);
             });
 
             socket.On("match_start", (data) =>
@@ -72,7 +69,6 @@ namespace EverballDotNet
                     Force = 0.1,
                     Toy = 1
                 };
-                Thread.Sleep(timeToWait);
                 socket.Emit("client_input", JsonConvert.SerializeObject(mov));
                 //Thread.Sleep(timeToWait);
             });
