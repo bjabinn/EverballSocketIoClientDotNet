@@ -2,30 +2,16 @@
 using Quobject.SocketIoClientDotNet.Client;
 using Newtonsoft.Json;
 using System.Threading;
-using System.Collections.Generic;
 
 namespace EverballDotNet
 {
     class Program
     {
+        static int timeToWait = 150;
         static void Main(string[] args)
         {
-
-            var ManualResetEvent = new ManualResetEvent(false);
-            var events = new Queue<object>();
-
-
             var socket = IO.Socket("http://localhost:3000");
             object dataFromServer;
-
-            //Menu();
-
-            socket.On(Socket.EVENT_CONNECT, () =>
-            {
-                Console.WriteLine("EVENT_CONNECT");
-                
-                //socket.Disconnect();
-            });
 
             socket.On(Socket.EVENT_CONNECT_ERROR, () =>
             {
@@ -52,69 +38,53 @@ namespace EverballDotNet
                 };
 
                 var datoToSend = JsonConvert.SerializeObject(login);
+                Thread.Sleep(timeToWait);
                 socket.Emit("login", datoToSend);
-                ManualResetEvent.Set();
+                
             });
 
             socket.On("server_message", (data) =>
             {
-                Console.WriteLine("1st line - server_message: {data}");
+                Console.WriteLine($"server_message: {data}");
                 var roomData = new Room
                 {
                     RoomName = "One__",
                     RoomPassword = "123"
                 };
                 var datoToSend = JsonConvert.SerializeObject(roomData);
+                Thread.Sleep(timeToWait);
                 socket.Emit("join_room", datoToSend);
-                events.Enqueue(data);
-                ManualResetEvent.Set();
+                //Thread.Sleep(timeToWait);
             });
-
 
             socket.On("match_start", (data) =>
             {
-                Console.WriteLine("1st line - match_start - {data}");
+                Console.WriteLine($"match_start - {data}");
                 dataFromServer = data;
             });
 
             socket.On("server_state", (data) =>
             {
-                Console.WriteLine("1st line - server_state: {data} ");
+                Console.WriteLine($"server_state: {data} ");
                 var mov = new Movement
                 {
                     Angle = 90.0,
                     Force = 0.1,
                     Toy = 1
                 };
+                Thread.Sleep(timeToWait);
                 socket.Emit("client_input", JsonConvert.SerializeObject(mov));
-                events.Enqueue(data);
-                ManualResetEvent.Set();
+                //Thread.Sleep(timeToWait);
             });
 
-            ManualResetEvent.WaitOne();
+            Console.WriteLine("fin de ejecucion");
             Console.ReadLine();
-        }
+        } //end Main
 
-        static void Menu()
-        {
-            Console.WriteLine("1.- Connect to server game");
-            Console.WriteLine("5.- Jugar");
-            Console.WriteLine("10.- Desconectar");
-            var tecla = Console.ReadKey();
+    } //end class
 
+} //end namespace
 
-            switch (tecla.Key)
-            {
-                case ConsoleKey.D1:
-                    break;
-                case ConsoleKey.D5:
-                    break;
-                case ConsoleKey.D0:
-                    break;
-            }
-        }
-    }
-}
 
 
 
