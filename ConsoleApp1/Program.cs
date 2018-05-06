@@ -8,11 +8,18 @@ namespace EverballDotNet
     class Program
     {
         const int timeToWait = 150;
-        static void Main(string[] args)
-        {
-            var socket = IO.Socket("http://localhost:3000");
-            object dataFromServer;
+        static object dataFromServer;
+        static Socket socket;
 
+        static private void Connect()
+        {
+            socket = IO.Socket("http://localhost:3000");
+            socket.Connect();
+            Console.WriteLine("Connected to server");
+        }
+
+        static private void Play()
+        {
             socket.On(Socket.EVENT_CONNECT_ERROR, () =>
             {
                 Console.WriteLine("Error connecting");
@@ -39,7 +46,7 @@ namespace EverballDotNet
 
                 var datoToSend = JsonConvert.SerializeObject(login);
                 socket.Emit("login", datoToSend);
-                
+
             });
 
             socket.On("server_message", (data) =>
@@ -72,9 +79,12 @@ namespace EverballDotNet
                 socket.Emit("client_input", JsonConvert.SerializeObject(mov));
                 //Thread.Sleep(timeToWait);
             });
+        }
 
-            Console.WriteLine("fin de ejecucion");
-            Console.ReadLine();
+        static void Main(string[] args)
+        {
+            Connect();
+            Play();
         } //end Main
 
     } //end class
