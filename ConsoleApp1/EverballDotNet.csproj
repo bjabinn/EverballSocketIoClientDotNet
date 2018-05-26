@@ -86,6 +86,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ServerState.cs" />
     <Compile Include="Login.cs" />
     <Compile Include="Movement.cs" />
     <Compile Include="Program.cs" />

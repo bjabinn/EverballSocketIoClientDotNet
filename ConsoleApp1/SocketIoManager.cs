@@ -41,21 +41,12 @@ namespace EverballDotNet
                 }
             });
 
-            _socket.On("match_start", (msg) =>
-            {
-                Console.WriteLine($"match_start: {msg}");
-
-                //var json = JsonConvert.SerializeObject(msg);
-                //_matchStart = JsonConvert.DeserializeObject<_matchData>(json);
-            });
-
             _socket.On("server_state", (msg) =>
             {
+                var json = JsonConvert.SerializeObject(msg);
+
+                var serverState = JsonConvert.DeserializeObject<ServerState>(json);
                 Console.WriteLine($"serverState: {msg}");
-
-                //var json = JsonConvert.SerializeObject(msg);
-                //var serverState = JsonConvert.DeserializeObject<ServerState>(json);
-
                 //if (_matchStart?.Role == 2)
                 //{
                 //    PlayAsPlayer2(serverState);
@@ -64,6 +55,13 @@ namespace EverballDotNet
                 //{
                 //    PlayAsPlayer1(serverState);
                 //}
+            });
+
+            _socket.On("match_start", (msg) =>
+            {
+                var json = JsonConvert.SerializeObject(msg);
+                Console.WriteLine($"match_start: {msg}");
+                //_matchStart = JsonConvert.DeserializeObject<_matchData>(json);
             });
 
             _socket.On("connect_error", (exception) =>
