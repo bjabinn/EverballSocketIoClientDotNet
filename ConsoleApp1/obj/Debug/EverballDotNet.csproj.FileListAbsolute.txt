@@ -124,7 +124,6 @@ C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIo
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.exe
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.pdb
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\bin\Debug\SocketIoClientDotNet.dll
-C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csprojResolveAssemblyReference.cache
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\bin\Debug\System.Collections.Specialized.dll
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\bin\Debug\System.Net.NameResolution.dll
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\bin\Debug\System.Net.Security.dll
@@ -133,3 +132,5 @@ C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIo
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\bin\Debug\System.Security.Cryptography.Encoding.dll
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\bin\Debug\System.Security.Cryptography.Primitives.dll
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\bin\Debug\System.Security.Cryptography.X509Certificates.dll
+C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csprojAssemblyReference.cache
+C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csproj.CopyComplete
