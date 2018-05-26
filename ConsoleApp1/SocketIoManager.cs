@@ -4,10 +4,18 @@ using Newtonsoft.Json;
 
 namespace EverballDotNet
 {
+    enum Lado
+    {
+        derecho = 1,
+        izquierdo = 2
+    }
+
     class SocketIoManager
     {
         private Socket _socket;
-        object _matchData;
+        private ServerState _serverState;
+        private MatchData _matchData;
+        private Lado jugandoComo;
 
         public SocketIoManager(string url)
         {            
@@ -25,7 +33,7 @@ namespace EverballDotNet
             _socket.On("connect", () =>
             {
                 Console.WriteLine("connect: Recibido evento connect desde el server");
-                var login = new { name = "123456", password = "123456" };
+                var login = new { name = "bjabinn2", password = "123456" };
                 _socket.Emit("login", login);
             });
 
@@ -45,23 +53,24 @@ namespace EverballDotNet
             {
                 var json = JsonConvert.SerializeObject(msg);
 
-                var serverState = JsonConvert.DeserializeObject<ServerState>(json);
+                _serverState = JsonConvert.DeserializeObject<ServerState>(json);
                 Console.WriteLine($"serverState: {msg}");
-                //if (_matchStart?.Role == 2)
-                //{
-                //    PlayAsPlayer2(serverState);
-                //}
-                //else
-                //{
-                //    PlayAsPlayer1(serverState);
-                //}
+                if (jugandoComo == Lado.derecho)
+                {
+                    PlayAsPlayer1(_serverState, _matchData);
+                }
+                else
+                {
+                    PlayAsPlayer2(_serverState, _matchData);
+                }
             });
 
             _socket.On("match_start", (msg) =>
             {
                 var json = JsonConvert.SerializeObject(msg);
                 Console.WriteLine($"match_start: {msg}");
-                //_matchStart = JsonConvert.DeserializeObject<_matchData>(json);
+                _matchData = JsonConvert.DeserializeObject<MatchData>(json);
+                jugandoComo = (Lado)(_matchData?.role);               
             });
 
             _socket.On("connect_error", (exception) =>
@@ -71,15 +80,15 @@ namespace EverballDotNet
             });
         }
 
-        //private PlayAsPlayer1()
-        //{
+        private void PlayAsPlayer1(ServerState serverState, MatchData matchData)
+        {
+            Console.WriteLine(JsonConvert.SerializeObject(serverState));
+        }
 
-        //}
-
-        //private PlayAsPlayer2()
-        //{
-
-        //}
+        private void PlayAsPlayer2(ServerState serverState, MatchData matchData)
+        {
+            Console.WriteLine(JsonConvert.SerializeObject(serverState));
+        }
 
         public void Disconnect()
         {
