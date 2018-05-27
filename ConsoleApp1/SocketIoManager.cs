@@ -1,6 +1,7 @@
 ﻿using Quobject.SocketIoClientDotNet.Client;
 using System;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace EverballDotNet
 {
@@ -32,7 +33,7 @@ namespace EverballDotNet
 
             _socket.On("connect", () =>
             {
-                Console.WriteLine("connect: Recibido evento connect desde el server");
+                //Console.WriteLine("connect: Recibido evento connect desde el server");
                 var login = new { name = "bjabinn2", password = "123456" };
                 _socket.Emit("login", login);
             });
@@ -40,7 +41,7 @@ namespace EverballDotNet
             _socket.On("server_message", (data) =>
             {
                 var dataStr = data as string;
-                Console.WriteLine($"server_message: {data}");
+                WriteLog($"server_message: {data}");
 
                 if (dataStr.IndexOf("Logged in as") == 0)
                 {
@@ -54,21 +55,21 @@ namespace EverballDotNet
                 var json = JsonConvert.SerializeObject(msg);
 
                 _serverState = JsonConvert.DeserializeObject<ServerState>(json);
-                Console.WriteLine($"serverState: {msg}");
+                WriteLog($"server_state: {msg}");
                 if (jugandoComo == Lado.derecho)
                 {
-                    PlayAsPlayer1(_serverState, _matchData);
+                    PlayAsPlayer1(_serverState);
                 }
                 else
                 {
-                    PlayAsPlayer2(_serverState, _matchData);
+                    PlayAsPlayer2(_serverState);
                 }
             });
 
             _socket.On("match_start", (msg) =>
             {
                 var json = JsonConvert.SerializeObject(msg);
-                Console.WriteLine($"match_start: {msg}");
+                WriteLog($"match_start: {msg}");
                 _matchData = JsonConvert.DeserializeObject<MatchData>(json);
                 jugandoComo = (Lado)(_matchData?.role);               
             });
@@ -76,23 +77,62 @@ namespace EverballDotNet
             _socket.On("connect_error", (exception) =>
             {
                 var ex = exception as Exception;
-                Console.WriteLine($"Error: {ex?.InnerException?.Message}");
+                WriteLog($"Error: {ex?.InnerException?.Message}");
             });
         }
 
-        private void PlayAsPlayer1(ServerState serverState, MatchData matchData)
+        private void PlayAsPlayer1(ServerState serverState)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(serverState));
+            WriteLog("PlayAsPlayer1" + JsonConvert.SerializeObject(serverState));
         }
 
-        private void PlayAsPlayer2(ServerState serverState, MatchData matchData)
+        private void PlayAsPlayer2(ServerState serverState)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(serverState));
+            //Chapa 1 y 2 van por sus chapas
+            var mov1 = new CapMovement()
+            {
+                angle = 45,
+                cap_num = 1,
+                force = 1.2f
+            };
+            if (serverState.Team_2[0].cooldown == 0)
+            {
+                _socket.Emit("join_room", mov1);
+            }
+            
+
+            //chapa 3 va por la bola
+
         }
 
         public void Disconnect()
         {
             _socket?.Disconnect();
+        }
+
+        public static void WriteLog(string strLog)
+        {
+            StreamWriter log;
+            FileStream fileStream = null;
+            DirectoryInfo logDirInfo = null;
+            FileInfo logFileInfo;
+
+            string logFilePath = "C:\\Logs\\";
+            logFilePath = logFilePath + "Log-" + System.DateTime.Today.ToString("MM-dd-yyyy") + "." + "txt";
+            logFileInfo = new FileInfo(logFilePath);
+            logDirInfo = new DirectoryInfo(logFileInfo.DirectoryName);
+            if (!logDirInfo.Exists) logDirInfo.Create();
+            if (!logFileInfo.Exists)
+            {
+                fileStream = logFileInfo.Create();
+            }
+            else
+            {
+                fileStream = new FileStream(logFilePath, FileMode.Append);
+            }
+            log = new StreamWriter(fileStream);
+            log.WriteLine(strLog);
+            log.Close();
         }
     } // end class
 } //end namespace
