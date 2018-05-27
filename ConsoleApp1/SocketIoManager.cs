@@ -96,44 +96,95 @@ namespace EverballDotNet
 
         private void DosPorLosOponentes_1PorElBalon(ServerState serverState)
         {
-            if (serverState.Ball.x < 4.3)
-            {                
-                if (serverState.Team_2[0].cooldown <= 0)
+            //the ball is in my field
+            if (serverState.Ball.x < _matchData.playground_info.field_corners.top_right_x / 2)
+            {   
+                //cap is ahead to the ball
+                if (serverState.Team_2[0].x >= serverState.Ball.x)
                 {
+                    //the cap go back to the goal to defend
+                    if (serverState.Team_2[0].cooldown <= 0)
+                    {
+                        var mov1 = new CapMovement()
+                        {
+                            angle = (float)(Math.Atan2(1.5 - serverState.Team_2[0].y, 1.15 - serverState.Team_2[0].x) * 180 / Math.PI),
+                            cap_num = 1,
+                            force = 1.2f
+                        };
+                        _socket.Emit("client_input", mov1);
+                    }                
+                }
+                else
+                {
+                    //kick the ball
                     var mov1 = new CapMovement()
                     {
-                        angle = (float)(Math.Atan2(1.5 - serverState.Team_2[0].y, 1.15 - serverState.Team_2[0].x) * 180 / Math.PI),
+                        angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[0].y, serverState.Ball.x - serverState.Team_2[0].x) * 180 / Math.PI),
                         cap_num = 1,
                         force = 1.2f
                     };
                     _socket.Emit("client_input", mov1);
                 }
 
-                if (serverState.Team_2[1].cooldown <= 0)
+                //---------------- CAP2
+                //cap is ahead to the ball
+                if (serverState.Team_2[1].x >= serverState.Ball.x)
                 {
+                    //the cap go back to the goal to defend
+                    if (serverState.Team_2[1].cooldown <= 0)
+                    {
+                        var mov2 = new CapMovement()
+                        {
+                            angle = (float)(Math.Atan2(2.5 - serverState.Team_2[1].y, 1.15 - serverState.Team_2[1].x) * 180 / Math.PI),
+                            cap_num = 2,
+                            force = 1.2f
+                        };
+
+                        _socket.Emit("client_input", mov2);
+                    }
+                }
+                else
+                {
+                    //kick the ball
                     var mov2 = new CapMovement()
                     {
-                        angle = (float)(Math.Atan2(2.5 - serverState.Team_2[1].y, 1.15 - serverState.Team_2[1].x) * 180 / Math.PI),
+                        angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[1].y, serverState.Ball.x - serverState.Team_2[1].x) * 180 / Math.PI),
                         cap_num = 2,
                         force = 1.2f
                     };
-
                     _socket.Emit("client_input", mov2);
                 }
 
-                //chapa 3 va por la bola
-                if (serverState.Team_2[2].cooldown <= 0)
+                //---------------- CAP3
+                //cap is ahead to the ball
+                if (serverState.Team_2[2].x > serverState.Ball.x)
                 {
+                    //the cap go back to the goal to defend
+                    if (serverState.Team_2[2].cooldown <= 0)
+                    {
+                        var mov3 = new CapMovement()
+                        {
+                            angle = (float)(Math.Atan2(3.5 - serverState.Team_2[2].y, 1.15 - serverState.Team_2[2].x) * 180 / Math.PI),
+                            cap_num = 3,
+                            force = 1.2f
+                        };
+
+                        _socket.Emit("client_input", mov3);
+                    }
+                }
+                else
+                {
+                    //kick the ball
                     var mov3 = new CapMovement()
                     {
-                        angle = (float)(Math.Atan2(3.5 - serverState.Team_2[2].y, 1.15 - serverState.Team_2[2].x) * 180 / Math.PI),
+                        angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[2].y, serverState.Ball.x - serverState.Team_2[2].x) * 180 / Math.PI),
                         cap_num = 3,
                         force = 1.2f
                     };
-
                     _socket.Emit("client_input", mov3);
-                }
+                }                          
             }
+            //the ball is in the other field
             else
             {
                 //Chapa 1 y 2 van por sus chapas
