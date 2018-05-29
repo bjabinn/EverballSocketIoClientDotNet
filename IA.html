@@ -1,0 +1,165 @@
+﻿<!doctype html>
+<html>
+<head>
+    <title>Everball API test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 13px Helvetica, Arial;
+        }
+
+        form {
+            background: #000;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+            form input {
+                border: 0;
+                padding: 10px;
+                width: 100%;
+                margin-right: .5%;
+            }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+            #messages li {
+                padding: 5px 10px;
+            }
+
+                #messages li:nth-child(odd) {
+                    background: #eee;
+                }
+    </style>
+</head>
+<body>
+    <ul id="messages"></ul>
+    <form action="">
+        <input id="server_states" autocomplete="off" />
+    </form>
+</body>
+</html>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    $(function () {
+        var socket = io('http://code-game.com:3000'); //io('http://svq-87lsf5j:3000');
+        var field;
+        var server_state;
+        var client_input;
+
+        socket.on('connect', function () {
+            var login = {
+                name: 'bjabinn',
+                password:'123456'
+            }
+            socket.emit('login', login);
+        });
+
+        socket.on('server_message', function (data) {
+            $('#messages').append($('<li>').text(data));
+
+            if (data.indexOf('Logged in as') !== -1) {
+                var join = {
+                    name: 'One__',
+                    password: '123',
+					goals: '7',
+					time: '999'
+                }
+                socket.emit('join_room', join);
+            }	
+        });
+
+        socket.on('match_start', function (data) {
+            $('#messages').append($('<li>').text(JSON.stringify(data, undefined, 2)));
+            field = data;
+        });
+
+        socket.on('server_state', function (data) {
+            $('#server_states').val(JSON.stringify(data));
+			//$('#messages').append($('<li>').text(JSON.stringify(data, undefined, 2)));
+            server_state = data;
+            if (field != null && field.role == 1) {//compruebo si soy el player 1
+                for (i = 0; i < server_state.team_1.length; i++) {
+                    var cap = server_state.team_1[i];
+
+
+                    if (cap.cooldown <= 0) {
+                        var diff = {
+                            "x" : server_state.ball.x - cap.x,
+                            "y" : server_state.ball.y - cap.y
+                        };
+                        var angle = Math.atan2(diff.y, diff.x) * 57.2957;
+                        var force = 1.2;
+
+                        if (server_state.ball.x > cap.x) {
+                            force = 0.6;
+                            if (server_state.ball.y > cap.y) {
+                                angle = Math.random() * 60 + 300;
+                            }
+                            else {
+                                angle = Math.random() * 60;
+                            }
+                        }
+
+                        client_input = {
+                            "angle": angle,
+                            "force": force,
+                            "cap_num": cap.cap_num
+                        };
+                        socket.emit('client_input', client_input);
+                    }
+                }
+            }
+            else if (field != null && field.role == 2) {//compruebo si soy el player 2
+                for (i = 0; i < server_state.team_2.length; i++) {
+                    var cap = server_state.team_2[i];
+
+                    if (cap.cooldown <= 0) {
+                        var diff = {
+                            "x": server_state.ball.x - cap.x,
+                            "y": server_state.ball.y - cap.y
+                        };
+                        var angle = Math.atan2(diff.y, diff.x) * 57.2957;
+                        var force = 1.2;
+
+                        if (server_state.ball.x < cap.x) {
+                            force = 0.6;
+                            if (server_state.ball.y > cap.y) {
+                                angle = Math.random() * 60 + 180;
+                            }
+                            else {
+                                angle = Math.random() * 60 + 90;
+                            }
+                        }
+
+                        client_input = {
+                            "angle": angle,
+                            "force": force,
+                            "cap_num": cap.cap_num
+                        };
+                        socket.emit('client_input', client_input);
+                    }
+                }
+            }
+        });
+
+       /* $('form').submit(function () {
+            socket.emit('chat message', $('#m').val());
+            $('#m').val('');
+            return false;
+        });*/
+    });
+</script>

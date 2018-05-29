@@ -134,3 +134,27 @@ C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIo
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\bin\Debug\System.Security.Cryptography.X509Certificates.dll
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csprojAssemblyReference.cache
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_socketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csproj.CopyComplete
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\EverballDotNet.exe.config
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\EverballDotNet.exe
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\EverballDotNet.pdb
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\EngineIoClientDotNet.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\Newtonsoft.Json.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\SocketIoClientDotNet.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\SuperSocket.ClientEngine.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Collections.Immutable.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Collections.Specialized.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Net.NameResolution.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Net.Security.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Net.Sockets.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Security.Cryptography.Algorithms.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Security.Cryptography.Encoding.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Security.Cryptography.Primitives.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Security.Cryptography.X509Certificates.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\WebSocket4Net.dll
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\Newtonsoft.Json.xml
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Collections.Immutable.xml
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csprojAssemblyReference.cache
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csproj.CoreCompileInputs.cache
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csproj.CopyComplete
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.exe
+C:\Users\jbeltrma\Documents\Visual Studio 2017\Projects\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.pdb
