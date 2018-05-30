@@ -41,7 +41,7 @@ namespace EverballDotNet
             _socket.On("server_message", (data) =>
             {
                 var dataStr = data as string;
-                WriteLog($"server_message: {data}");
+                //WriteLog($"server_message: {data}");
 
                 if (dataStr.IndexOf("Logged in as") == 0)
                 {
@@ -56,7 +56,7 @@ namespace EverballDotNet
                 var json = JsonConvert.SerializeObject(msg);
 
                 _serverState = JsonConvert.DeserializeObject<ServerState>(json);
-                WriteLog($"server_state: {msg}");
+                //WriteLog($"server_state: {msg}");
                 if (jugandoComo == Lado.derecho)
                 {
                     PlayAsPlayer1(_serverState);
@@ -70,7 +70,7 @@ namespace EverballDotNet
             _socket.On("match_start", (msg) =>
             {
                 var json = JsonConvert.SerializeObject(msg);
-                WriteLog($"match_start: {msg}");
+                //WriteLog($"match_start: {msg}");
                 _matchData = JsonConvert.DeserializeObject<MatchData>(json);
                 jugandoComo = (Lado)(_matchData?.role);
             });
@@ -78,7 +78,7 @@ namespace EverballDotNet
             _socket.On("connect_error", (exception) =>
             {
                 var ex = exception as Exception;
-                WriteLog($"Error: {ex?.InnerException?.Message}");
+                //WriteLog($"Error: {ex?.InnerException?.Message}");
             });
         }
 
@@ -97,7 +97,9 @@ namespace EverballDotNet
         private void DosPorLosOponentes_1PorElBalon(ServerState serverState)
         {
             //the ball is in my field
-            if (serverState.Ball.x < _matchData.playground_info.field_corners.top_right_x / 2)
+            var mitalDelCampo = (_matchData.playground_info.field_corners.top_right_x - 
+                                 _matchData.playground_info.field_corners.top_left_x)/ 2;           
+            if (serverState.Ball.x <  mitalDelCampo)
             {   
                 //cap is ahead to the ball
                 if (serverState.Team_2[0].x >= serverState.Ball.x)
@@ -105,21 +107,29 @@ namespace EverballDotNet
                     //the cap go back to the goal to defend
                     if (serverState.Team_2[0].cooldown <= 0)
                     {
+                        var angleBetweenCap_Ball = Math.Atan2(serverState.Ball.y - serverState.Team_2[0].y, serverState.Ball.x - serverState.Team_2[0].x) * 180 / Math.PI;
+                        var angleToDefensePosition = (float)(Math.Atan2(1.75 - serverState.Team_2[0].y, 1.15 - serverState.Team_2[0].x) * 180 / Math.PI);
+                        float selectedAngle = angleToDefensePosition;
+                        if (angleToDefensePosition > angleBetweenCap_Ball - 10 || angleToDefensePosition < angleBetweenCap_Ball + 10)
+                        {
+                            selectedAngle = (float)angleBetweenCap_Ball - 15;
+                        }
+
                         var mov1 = new CapMovement()
                         {
-                            angle = (float)(Math.Atan2(1.5 - serverState.Team_2[0].y, 1.15 - serverState.Team_2[0].x) * 180 / Math.PI),
+                            angle = selectedAngle,
                             cap_num = 1,
                             force = 1.2f
                         };
                         _socket.Emit("client_input", mov1);
                     }                
                 }
-                else
+                else //cap behind the ball
                 {
-                    //kick the ball
+                    //por su chapa
                     var mov1 = new CapMovement()
                     {
-                        angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[0].y, serverState.Ball.x - serverState.Team_2[0].x) * 180 / Math.PI),
+                        angle = (float)(Math.Atan2(serverState.Team_1[0].y - serverState.Team_2[0].y, serverState.Team_1[0].x - serverState.Team_2[0].x) * 180 / Math.PI),
                         cap_num = 1,
                         force = 1.2f
                     };
@@ -133,9 +143,16 @@ namespace EverballDotNet
                     //the cap go back to the goal to defend
                     if (serverState.Team_2[1].cooldown <= 0)
                     {
+                        var angleBetweenCap_Ball = Math.Atan2(serverState.Ball.y - serverState.Team_2[1].y, serverState.Ball.x - serverState.Team_2[1].x) * 180 / Math.PI;
+                        var angleToDefensePosition = (float)(Math.Atan2(2.75 - serverState.Team_2[1].y, 1.15 - serverState.Team_2[1].x) * 180 / Math.PI);
+                        float selectedAngle = angleToDefensePosition;
+                        if (angleToDefensePosition > angleBetweenCap_Ball - 10 || angleToDefensePosition < angleBetweenCap_Ball + 10)
+                        {
+                            selectedAngle = (float)angleBetweenCap_Ball - 15;
+                        }
                         var mov2 = new CapMovement()
                         {
-                            angle = (float)(Math.Atan2(2.5 - serverState.Team_2[1].y, 1.15 - serverState.Team_2[1].x) * 180 / Math.PI),
+                            angle = selectedAngle,
                             cap_num = 2,
                             force = 1.2f
                         };
@@ -144,14 +161,15 @@ namespace EverballDotNet
                     }
                 }
                 else
-                {
-                    //kick the ball
+                {                    
+                    //por su chapa
                     var mov2 = new CapMovement()
                     {
-                        angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[1].y, serverState.Ball.x - serverState.Team_2[1].x) * 180 / Math.PI),
+                        angle = (float)(Math.Atan2(serverState.Team_1[1].y - serverState.Team_2[1].y, serverState.Team_1[1].x - serverState.Team_2[1].x) * 180 / Math.PI),
                         cap_num = 2,
                         force = 1.2f
                     };
+
                     _socket.Emit("client_input", mov2);
                 }
 
@@ -162,9 +180,16 @@ namespace EverballDotNet
                     //the cap go back to the goal to defend
                     if (serverState.Team_2[2].cooldown <= 0)
                     {
+                        var angleBetweenCap_Ball = Math.Atan2(serverState.Ball.y - serverState.Team_2[2].y, serverState.Ball.x - serverState.Team_2[2].x) * 180 / Math.PI;
+                        var angleToDefensePosition = (float)(Math.Atan2(3.75 - serverState.Team_2[2].y, 1.15 - serverState.Team_2[2].x) * 180 / Math.PI);
+                        float selectedAngle = angleToDefensePosition;
+                        if (angleToDefensePosition > angleBetweenCap_Ball - 10 || angleToDefensePosition < angleBetweenCap_Ball + 10)
+                        {
+                            selectedAngle = (float)angleBetweenCap_Ball - 15;
+                        }
                         var mov3 = new CapMovement()
                         {
-                            angle = (float)(Math.Atan2(3.5 - serverState.Team_2[2].y, 1.15 - serverState.Team_2[2].x) * 180 / Math.PI),
+                            angle = selectedAngle,
                             cap_num = 3,
                             force = 1.2f
                         };
@@ -173,11 +198,11 @@ namespace EverballDotNet
                     }
                 }
                 else
-                {
-                    //kick the ball
+                {                                        
+                    //por su chapa
                     var mov3 = new CapMovement()
                     {
-                        angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[2].y, serverState.Ball.x - serverState.Team_2[2].x) * 180 / Math.PI),
+                        angle = (float)(Math.Atan2(serverState.Team_1[2].y - serverState.Team_2[2].y, serverState.Team_1[2].x - serverState.Team_2[2].x) * 180 / Math.PI),
                         cap_num = 3,
                         force = 1.2f
                     };
@@ -186,13 +211,13 @@ namespace EverballDotNet
             }
             //the ball is in the other field
             else
-            {
-                //Chapa 1 y 2 van por sus chapas
+            {                
                 if (serverState.Team_2[0].cooldown <= 0)
                 {
+                    //kick the ball                    
                     var mov1 = new CapMovement()
                     {
-                        angle = (float)(Math.Atan2(serverState.Team_1[0].y - serverState.Team_2[0].y, serverState.Team_1[0].x - serverState.Team_2[0].x) * 180 / Math.PI),
+                        angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[0].y, serverState.Ball.x - serverState.Team_2[0].x) * 180 / Math.PI),
                         cap_num = 1,
                         force = 1.2f
                     };
@@ -201,9 +226,10 @@ namespace EverballDotNet
 
                 if (serverState.Team_2[1].cooldown <= 0)
                 {
+                    //kick the ball
                     var mov2 = new CapMovement()
                     {
-                        angle = (float)(Math.Atan2(serverState.Team_1[1].y - serverState.Team_2[1].y, serverState.Team_1[1].x - serverState.Team_2[1].x) * 180 / Math.PI),
+                        angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[1].y, serverState.Ball.x - serverState.Team_2[1].x) * 180 / Math.PI),
                         cap_num = 2,
                         force = 1.2f
                     };
