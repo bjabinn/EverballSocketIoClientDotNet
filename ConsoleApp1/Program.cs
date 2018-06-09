@@ -3,14 +3,32 @@
 namespace EverballDotNet
 {
     class Program
-    {
-        //static SocketIoManager socket = new SocketIoManager("http://localhost:3000");
-        static SocketIoManager socket = new SocketIoManager("http://code-game.com:3000");
-
+    {      
         static void Main(string[] args)
         {
+            Console.Write("Servidor: ");
+            string serverToConnect = Console.ReadLine();
+            if (string.IsNullOrEmpty(serverToConnect)) {            
+                serverToConnect = "http://code-game.com:3000";
+            }
+            SocketIoManager socket = new SocketIoManager(serverToConnect);
+
+            Console.Write("Usuario: ");
+            var user = Console.ReadLine();
+            if (string.IsNullOrEmpty(user))
+            {
+                user = "bjabinn2";
+            }
+
+            Console.Write("Contraseña: ");
+            var pass = Console.ReadLine();
+            if (string.IsNullOrEmpty(pass))
+            {
+                pass = "123456";
+            }
+
             socket.Conecta();
-            socket.Play();
+            socket.Play(user, pass);
             Console.ReadLine();
         } //end Main
 

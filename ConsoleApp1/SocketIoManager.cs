@@ -28,13 +28,13 @@ namespace EverballDotNet
             _socket.Connect();
         }
 
-        public void Play()
+        public void Play(string user, string pass)
         {
 
             _socket.On("connect", () =>
             {
-                //Console.WriteLine("connect: Recibido evento connect desde el server");
-                var login = new { name = "bjabinn2", password = "123456" };
+                //WriteLog("connect: Recibido evento connect desde el server");               
+                var login = new { name = user, password = pass };
                 _socket.Emit("login", login);
             });
 
@@ -45,8 +45,21 @@ namespace EverballDotNet
 
                 if (dataStr.IndexOf("Logged in as") == 0)
                 {
-                    var join = new { name = "One__", password = "123" };
-                    //var join = new { name = "Test room", password = "abc" };
+                    Console.Write("Nombre de la sala: ");
+                    var salaName = Console.ReadLine();
+                    if (string.IsNullOrEmpty(salaName))
+                    {
+                        salaName = "One__";
+                    }
+
+                    Console.Write("Password de la sala:");
+                    var salaPassword = Console.ReadLine();
+                    if (string.IsNullOrEmpty(salaPassword))
+                    {
+                        salaPassword = "123";
+                    }
+                    
+                    var join = new { name = salaName, password = salaPassword };
                     _socket.Emit("join_room", join);
                 }
             });
@@ -85,175 +98,37 @@ namespace EverballDotNet
         //jugando a la derecha
         private void PlayAsPlayer1(ServerState serverState)
         {
-            //DosPorLosOponentes_1PorElBalon(serverState);
+            DosPorLosOponentes_1PorElBalon(serverState, Lado.derecho);
         }
 
         //a la izqda
         private void PlayAsPlayer2(ServerState serverState)
         {
-            DosPorLosOponentes_1PorElBalon(serverState);
+            DosPorLosOponentes_1PorElBalon(serverState,Lado.izquierdo);
         }
 
-        private void DosPorLosOponentes_1PorElBalon(ServerState serverState)
+        private void DosPorLosOponentes_1PorElBalon(ServerState serverState, Lado lado)
         {
 
             var mitalDelCampo = (_matchData.playground_info.field_corners.top_right_x -
                                  _matchData.playground_info.field_corners.top_left_x) / 2;
 
-            if (serverState.Team_2[0].cooldown <= 0)
+            Team[] miEquipo;
+            Team[] otroEquipo;
+            if (lado == Lado.izquierdo)
             {
-                //cap is ahead to the ball
-                if (serverState.Team_2[0].x >= serverState.Ball.x)
-                {
-                    //the cap go back to the goal to defend
-                    var angleBetweenCap_Ball = Math.Atan2(serverState.Ball.y - serverState.Team_2[0].y, serverState.Ball.x - serverState.Team_2[0].x) * 180 / Math.PI;
-                    var angleToDefensePosition = (float)(Math.Atan2(1.75 - serverState.Team_2[0].y, 1.15 - serverState.Team_2[0].x) * 180 / Math.PI);
-                    float selectedAngle = angleToDefensePosition;
-                    if (angleToDefensePosition > angleBetweenCap_Ball - 10 || angleToDefensePosition < angleBetweenCap_Ball + 10)
-                    {
-                        selectedAngle = (float)angleBetweenCap_Ball - 15;
-                    }
-
-                    var mov1 = new CapMovement()
-                    {
-                        angle = selectedAngle,
-                        cap_num = 1,
-                        force = 1.2f
-                    };
-                    _socket.Emit("client_input", mov1);
-
-                }
-                else //cap behind the ball
-                {
-                    if (serverState.Ball.x < mitalDelCampo)
-                    {
-                        //por su chapa
-                        var mov1 = new CapMovement()
-                        {
-                            angle = (float)(Math.Atan2(serverState.Team_1[0].y - serverState.Team_2[0].y, serverState.Team_1[0].x - serverState.Team_2[0].x) * 180 / Math.PI),
-                            cap_num = 1,
-                            force = 1.2f
-                        };
-                        _socket.Emit("client_input", mov1);
-                    }
-                    else
-                    {
-
-                        //kick the ball                    
-                        var mov1 = new CapMovement()
-                        {
-                            angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[0].y, serverState.Ball.x - serverState.Team_2[0].x) * 180 / Math.PI),
-                            cap_num = 1,
-                            force = 1.2f
-                        };
-                        _socket.Emit("client_input", mov1);
-
-                    }
-
-                }
+                miEquipo = serverState.Team_2;
+                otroEquipo = serverState.Team_1;
             }
-                
-
-            //cap2
-            if (serverState.Team_2[1].cooldown <= 0)
+            else
             {
-                //cap is ahead to the ball
-                if (serverState.Team_2[1].x >= serverState.Ball.x)
-                {
-                    //the cap go back to the goal to defend
-                    var angleBetweenCap_Ball = Math.Atan2(serverState.Ball.y - serverState.Team_2[1].y, serverState.Ball.x - serverState.Team_2[1].x) * 180 / Math.PI;
-                    var angleToDefensePosition = (float)(Math.Atan2(2.75 - serverState.Team_2[1].y, 1.15 - serverState.Team_2[1].x) * 180 / Math.PI);
-                    float selectedAngle = angleToDefensePosition;
-                    if (angleToDefensePosition > angleBetweenCap_Ball - 10 || angleToDefensePosition < angleBetweenCap_Ball + 10)
-                    {
-                        selectedAngle = (float)angleBetweenCap_Ball - 15;
-                    }
-
-                    var mov1 = new CapMovement()
-                    {
-                        angle = selectedAngle,
-                        cap_num = 2,
-                        force = 1.2f
-                    };
-                    _socket.Emit("client_input", mov1);
-                }
-                else //cap behind the ball
-                {
-                    if (serverState.Ball.x < mitalDelCampo)
-                    {
-                        //por su chapa
-                        var mov1 = new CapMovement()
-                        {
-                            angle = (float)(Math.Atan2(serverState.Team_1[1].y - serverState.Team_2[1].y, serverState.Team_1[1].x - serverState.Team_2[1].x) * 180 / Math.PI),
-                            cap_num = 2,
-                            force = 1.2f
-                        };
-                        _socket.Emit("client_input", mov1);
-                    }
-                    else
-                    {
-                        //kick the ball                    
-                        var mov1 = new CapMovement()
-                        {
-                            angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[1].y, serverState.Ball.x - serverState.Team_2[1].x) * 180 / Math.PI),
-                            cap_num = 2,
-                            force = 1.2f
-                        };
-                        _socket.Emit("client_input", mov1);
-                    }
-                }
+                miEquipo = serverState.Team_1;
+                otroEquipo = serverState.Team_2;
             }
 
-            //cap3            
-            if (serverState.Team_2[2].cooldown <= 0)
-            {
-                //cap is ahead to the ball
-                if (serverState.Team_2[2].x >= serverState.Ball.x)
-                {
-                    //the cap go back to the goal to defend
-                    var angleBetweenCap_Ball = Math.Atan2(serverState.Ball.y - serverState.Team_2[2].y, serverState.Ball.x - serverState.Team_2[2].x) * 180 / Math.PI;
-                    var angleToDefensePosition = (float)(Math.Atan2(3.75 - serverState.Team_2[2].y, 1.15 - serverState.Team_2[2].x) * 180 / Math.PI);
-                    float selectedAngle = angleToDefensePosition;
-                    if (angleToDefensePosition > angleBetweenCap_Ball - 10 || angleToDefensePosition < angleBetweenCap_Ball + 10)
-                    {
-                        selectedAngle = (float)angleBetweenCap_Ball - 15;
-                    }
-
-                    var mov1 = new CapMovement()
-                    {
-                        angle = selectedAngle,
-                        cap_num = 3,
-                        force = 1.2f
-                    };
-                    _socket.Emit("client_input", mov1);
-
-                }
-                else //cap behind the ball
-                {
-                    if (serverState.Ball.x < mitalDelCampo)
-                    {
-                        //por su chapa
-                        var mov1 = new CapMovement()
-                        {
-                            angle = (float)(Math.Atan2(serverState.Team_1[2].y - serverState.Team_2[2].y, serverState.Team_1[2].x - serverState.Team_2[2].x) * 180 / Math.PI),
-                            cap_num = 3,
-                            force = 1.2f
-                        };
-                        _socket.Emit("client_input", mov1);
-                    }
-                    else
-                    {
-                        //kick the ball                    
-                        var mov1 = new CapMovement()
-                        {
-                            angle = (float)(Math.Atan2(serverState.Ball.y - serverState.Team_2[2].y, serverState.Ball.x - serverState.Team_2[2].x) * 180 / Math.PI),
-                            cap_num = 3,
-                            force = 1.2f
-                        };
-                        _socket.Emit("client_input", mov1);
-                    }
-                }
-            }
+            MueveCap(0, serverState, miEquipo, mitalDelCampo, 1.75, 1.15, otroEquipo);
+            MueveCap(1, serverState, miEquipo, mitalDelCampo, 2.75, 1.15, otroEquipo);
+            MueveCap(2, serverState, miEquipo, mitalDelCampo, 3.75, 1.15, otroEquipo);
         }
 
         public void Disconnect()
@@ -284,6 +159,65 @@ namespace EverballDotNet
             log = new StreamWriter(fileStream);
             log.WriteLine(strLog);
             log.Close();
+        }
+
+        private void MueveCap(int capNum, ServerState serverState, Team[] miEquipo, 
+                              float mitadDelCampo, double coordenadaY_defensa, double coordenadaX_defensa,
+                              Team[] otroEquipo)
+        {
+            if (miEquipo[capNum].cooldown <= 0)
+            {
+                //cap is ahead to the ball
+                if (miEquipo[capNum].x >= serverState.Ball.x)
+                {
+                    //the cap go back to the goal to defend
+                    var angleBetweenCap_Ball = Math.Atan2(serverState.Ball.y - miEquipo[capNum].y, serverState.Ball.x - miEquipo[capNum].x) * 180 / Math.PI;
+                    var angleToDefensePosition = (float)(Math.Atan2(coordenadaY_defensa - miEquipo[capNum].y, coordenadaX_defensa - miEquipo[capNum].x) * 180 / Math.PI);
+                    float selectedAngle = angleToDefensePosition;
+                    if (angleToDefensePosition > angleBetweenCap_Ball - 10 || angleToDefensePosition < angleBetweenCap_Ball + 10)
+                    {
+                        selectedAngle = (float)angleBetweenCap_Ball - 15;
+                    }
+
+                    var mov = new CapMovement()
+                    {
+                        angle = selectedAngle,
+                        cap_num = capNum+1,
+                        force = 1.2f
+                    };
+                    _socket.Emit("client_input", mov);
+
+                }
+                else //cap behind the ball
+                {
+                    if (serverState.Ball.x < mitadDelCampo)
+                    {
+                        //por su chapa
+                        var mov1 = new CapMovement()
+                        {
+                            angle = (float)(Math.Atan2(otroEquipo[capNum].y - miEquipo[capNum].y, otroEquipo[capNum].x - miEquipo[capNum].x) * 180 / Math.PI),
+                            cap_num = 1,
+                            force = 1.2f
+                        };
+                        _socket.Emit("client_input", mov1);
+                    }
+                    else
+                    {
+
+                        //kick the ball                    
+                        var mov = new CapMovement()
+                        {
+                            angle = (float)(Math.Atan2(serverState.Ball.y - miEquipo[capNum].y, serverState.Ball.x - miEquipo[capNum].x) * 180 / Math.PI),
+                            cap_num = 1,
+                            force = 1.2f
+                        };
+                        _socket.Emit("client_input", mov);
+
+                    }
+
+                }
+            }
+
         }
     } // end class
 } //end namespace
