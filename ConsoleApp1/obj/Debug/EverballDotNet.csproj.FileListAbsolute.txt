@@ -177,8 +177,8 @@ C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\Eve
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\WebSocket4Net.dll
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\Newtonsoft.Json.xml
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\EverballSocketIoClientDotNet\ConsoleApp1\bin\Debug\System.Collections.Immutable.xml
-C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csprojAssemblyReference.cache
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csproj.CoreCompileInputs.cache
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csproj.CopyComplete
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.exe
 C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.pdb
+C:\Users\Jose A. Beltran\Documents\Visual Studio 2017\Projects\everball_myIA\EverballSocketIoClientDotNet\ConsoleApp1\obj\Debug\EverballDotNet.csprojAssemblyReference.cache

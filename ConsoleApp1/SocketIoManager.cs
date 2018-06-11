@@ -2,6 +2,7 @@
 using System;
 using Newtonsoft.Json;
 using System.IO;
+using System.Threading;
 
 namespace EverballDotNet
 {
@@ -17,10 +18,15 @@ namespace EverballDotNet
         private ServerState _serverState;
         private MatchData _matchData;
         private Lado jugandoComo;
+        private string _user, _pass, _sala, _passSala;
 
-        public SocketIoManager(string url)
+        public SocketIoManager(string url, string user, string pass, string sala, string passSala)
         {
             _socket = IO.Socket(url);
+            _user = user;
+            _pass = pass;
+            _sala = sala;
+            _passSala = passSala;
         }
 
         public void Conecta()
@@ -28,13 +34,12 @@ namespace EverballDotNet
             _socket.Connect();
         }
 
-        public void Play(string user, string pass)
+        public void Play()
         {
-
             _socket.On("connect", () =>
             {
                 //WriteLog("connect: Recibido evento connect desde el server");               
-                var login = new { name = user, password = pass };
+                var login = new { name = _user, password = _pass };
                 _socket.Emit("login", login);
             });
 
@@ -44,22 +49,8 @@ namespace EverballDotNet
                 //WriteLog($"server_message: {data}");
 
                 if (dataStr.IndexOf("Logged in as") == 0)
-                {
-                    Console.Write("Nombre de la sala: ");
-                    var salaName = Console.ReadLine();
-                    if (string.IsNullOrEmpty(salaName))
-                    {
-                        salaName = "One__";
-                    }
-
-                    Console.Write("Password de la sala:");
-                    var salaPassword = Console.ReadLine();
-                    if (string.IsNullOrEmpty(salaPassword))
-                    {
-                        salaPassword = "123";
-                    }
-                    
-                    var join = new { name = salaName, password = salaPassword };
+                {                                        
+                    var join = new { name = _sala, password = _passSala };
                     _socket.Emit("join_room", join);
                 }
             });
@@ -109,26 +100,42 @@ namespace EverballDotNet
 
         private void DosPorLosOponentes_1PorElBalon(ServerState serverState, Lado lado)
         {
-
-            var mitalDelCampo = (_matchData.playground_info.field_corners.top_right_x -
+            if (_matchData != null)
+            {
+                var mitalDelCampo = (_matchData.playground_info.field_corners.top_right_x -
                                  _matchData.playground_info.field_corners.top_left_x) / 2;
 
-            Team[] miEquipo;
-            Team[] otroEquipo;
-            if (lado == Lado.izquierdo)
-            {
-                miEquipo = serverState.Team_2;
-                otroEquipo = serverState.Team_1;
-            }
-            else
-            {
-                miEquipo = serverState.Team_1;
-                otroEquipo = serverState.Team_2;
-            }
+                Team[] miEquipo;
+                Team[] otroEquipo;
+                if (lado == Lado.izquierdo)
+                {
+                    miEquipo = serverState.Team_2;
+                    otroEquipo = serverState.Team_1;
+                }
+                else
+                {
+                    miEquipo = serverState.Team_1;
+                    otroEquipo = serverState.Team_2;
+                }
 
-            MueveCap(0, serverState, miEquipo, mitalDelCampo, 1.75, 1.15, otroEquipo);
-            MueveCap(1, serverState, miEquipo, mitalDelCampo, 2.75, 1.15, otroEquipo);
-            MueveCap(2, serverState, miEquipo, mitalDelCampo, 3.75, 1.15, otroEquipo);
+                if (serverState.Match_event == "Kickoff")
+                {
+                    Thread.Sleep(1000);
+                }
+                if (lado == Lado.izquierdo)
+                {
+                    MueveCap(0, serverState, miEquipo, mitalDelCampo, 1.75, 1.15, otroEquipo);
+                    MueveCap(1, serverState, miEquipo, mitalDelCampo, 2.75, 1.15, otroEquipo);
+                    MueveCap(2, serverState, miEquipo, mitalDelCampo, 3.75, 1.15, otroEquipo);
+                }
+                else
+                {
+                    MueveCap(0, serverState, miEquipo, mitalDelCampo, 1.75, 1.15, otroEquipo);
+                    MueveCap(1, serverState, miEquipo, mitalDelCampo, 2.75, 1.15, otroEquipo);
+                    MueveCap(2, serverState, miEquipo, mitalDelCampo, 3.75, 1.15, otroEquipo);
+                }
+                
+            }            
         }
 
         public void Disconnect()
@@ -196,7 +203,7 @@ namespace EverballDotNet
                         var mov1 = new CapMovement()
                         {
                             angle = (float)(Math.Atan2(otroEquipo[capNum].y - miEquipo[capNum].y, otroEquipo[capNum].x - miEquipo[capNum].x) * 180 / Math.PI),
-                            cap_num = 1,
+                            cap_num = capNum + 1,
                             force = 1.2f
                         };
                         _socket.Emit("client_input", mov1);
@@ -208,7 +215,7 @@ namespace EverballDotNet
                         var mov = new CapMovement()
                         {
                             angle = (float)(Math.Atan2(serverState.Ball.y - miEquipo[capNum].y, serverState.Ball.x - miEquipo[capNum].x) * 180 / Math.PI),
-                            cap_num = 1,
+                            cap_num = capNum + 1,
                             force = 1.2f
                         };
                         _socket.Emit("client_input", mov);

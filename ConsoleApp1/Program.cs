@@ -11,7 +11,7 @@ namespace EverballDotNet
             if (string.IsNullOrEmpty(serverToConnect)) {            
                 serverToConnect = "http://code-game.com:3000";
             }
-            SocketIoManager socket = new SocketIoManager(serverToConnect);
+            
 
             Console.Write("Usuario: ");
             var user = Console.ReadLine();
@@ -27,8 +27,24 @@ namespace EverballDotNet
                 pass = "123456";
             }
 
+            Console.Write("Sala: ");
+            var sala = Console.ReadLine();
+            if (string.IsNullOrEmpty(sala))
+            {
+                sala = "One__";
+            }
+
+            Console.Write("Password de la sala: ");
+            var passSala = Console.ReadLine();
+            if (string.IsNullOrEmpty(passSala))
+            {
+                passSala = "123";
+            }
+
+            SocketIoManager socket = new SocketIoManager(serverToConnect, user, pass, sala, passSala);
+
             socket.Conecta();
-            socket.Play(user, pass);
+            socket.Play();
             Console.ReadLine();
         } //end Main
 
